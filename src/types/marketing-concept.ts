@@ -1,16 +1,13 @@
+import { Database } from './database'
 import { Audience } from './audience'
 
-export interface MarketingConcept {
-  id: string
-  user_id: string
-  audience_id?: string | null
-  title: string
-  description: string
-  source_concept_id?: string | null
+// Use Supabase-generated types
+export type MarketingConcept = Database['public']['Tables']['marketing_concepts']['Row'] & {
+  // Override audience_snapshots with proper typing
   audience_snapshots: Audience[]
-  created_at: string
-  updated_at: string
 }
+export type MarketingConceptInsert = Database['public']['Tables']['marketing_concepts']['Insert']
+export type MarketingConceptUpdate = Database['public']['Tables']['marketing_concepts']['Update']
 
 export interface MarketingConceptFormData {
   title: string

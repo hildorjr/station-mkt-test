@@ -186,10 +186,18 @@ export default function ConceptGeneratorModal({ onConceptGenerated }: ConceptGen
                               {audience.name}
                             </label>
                             <p className="text-xs text-gray-500 truncate">
-                              {audience.demographics?.age_range && 
-                                `Ages ${audience.demographics.age_range.min || '?'}-${audience.demographics.age_range.max || '?'}`
-                              }
-                              {audience.demographics?.gender?.filter(g => g !== 'All genders').join(', ')}
+                              {(() => {
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                const demo = (audience.demographics as any) || {}
+                                return (
+                                  <>
+                                    {demo.age_range &&
+                                      `Ages ${demo.age_range.min || '?'}-${demo.age_range.max || '?'}`
+                                    }
+                                    {demo.gender?.filter((g: string) => g !== 'All genders').join(', ')}
+                                  </>
+                                )
+                              })()}
                             </p>
                           </div>
                           {selectedAudienceIds.includes(audience.id) && (

@@ -43,24 +43,26 @@ function EditAudienceContent({ params }: EditAudiencePageProps) {
         const audienceData = result.data
 
         // Transform audience data to form format
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const demographics = (audienceData.demographics as any) || {}
         const transformedFormData: AudienceFormData = {
           name: audienceData.name,
-          age_min: audienceData.demographics.age_range?.min,
-          age_max: audienceData.demographics.age_range?.max,
-          gender: audienceData.demographics.gender || [],
-          location_type: audienceData.demographics.location?.type,
-          regions: audienceData.demographics.location?.regions || [],
-          education: audienceData.demographics.education || [],
-          income_level: audienceData.demographics.income_level || [],
-          interests: audienceData.demographics.interests || [],
-          hobbies: audienceData.demographics.hobbies || [],
-          brands_they_love: audienceData.demographics.brands_they_love || [],
-          shopping_behavior: audienceData.demographics.shopping_behavior || [],
-          media_consumption: audienceData.demographics.media_consumption || [],
-          tech_usage: audienceData.demographics.tech_usage || [],
-          pain_points: audienceData.demographics.pain_points || [],
-          aspirations: audienceData.demographics.aspirations || [],
-          additional_notes: audienceData.demographics.additional_notes,
+          age_min: demographics.age_range?.min,
+          age_max: demographics.age_range?.max,
+          gender: demographics.gender || [],
+          location_type: demographics.location?.type,
+          regions: demographics.location?.regions || [],
+          education: demographics.education || [],
+          income_level: demographics.income_level || [],
+          interests: demographics.interests || [],
+          hobbies: demographics.hobbies || [],
+          brands_they_love: demographics.brands_they_love || [],
+          shopping_behavior: demographics.shopping_behavior || [],
+          media_consumption: demographics.media_consumption || [],
+          tech_usage: demographics.tech_usage || [],
+          pain_points: demographics.pain_points || [],
+          aspirations: demographics.aspirations || [],
+          additional_notes: demographics.additional_notes || '',
         }
         
         setFormData(transformedFormData)

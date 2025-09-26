@@ -147,7 +147,8 @@ export async function deleteAudience(id: string, userId: string): Promise<Databa
 
 // Helper function to generate a readable summary of audience
 export function generateAudienceSummary(audience: Audience): string {
-  const demo = audience.demographics
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const demo = (audience.demographics as any) || {}
   const parts: string[] = []
 
   // Age and Gender

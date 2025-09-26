@@ -155,7 +155,8 @@ Do not include any other text, explanations, or markdown formatting. Only return
 }
 
 function buildAudienceDescription(audience: Audience): string {
-  const demo = audience.demographics
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const demo = (audience.demographics as any) || {}
   const parts: string[] = []
 
   parts.push(`Name: ${audience.name}`)

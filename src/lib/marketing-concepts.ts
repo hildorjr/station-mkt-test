@@ -1,5 +1,6 @@
 import { getBrowserSupabase, handleDatabaseError, handleDatabaseSuccess, DatabaseResponse } from '@/lib/db-utils'
-import { MarketingConcept, MarketingConceptFormData } from '@/types/marketing-concept'
+import { MarketingConcept, MarketingConceptInsert, MarketingConceptFormData } from '@/types/marketing-concept'
+import { Database } from '@/types/database'
 import { Audience } from '@/types/audience'
 
 // Client-side operations for marketing concepts
@@ -91,17 +92,19 @@ export async function createConceptWithSnapshots(
   try {
     const supabase = getBrowserSupabase()
     
+    const conceptData: MarketingConceptInsert = {
+      title: formData.title,
+      description: formData.description,
+      audience_id: formData.audience_ids?.[0] || null, // Primary audience for reference
+      audience_snapshots: formData.audience_snapshots as Database['public']['Tables']['marketing_concepts']['Insert']['audience_snapshots'], // Cast to Json for database
+      source_concept_id: formData.source_concept_id || null,
+      user_id: userId
+    }
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('marketing_concepts')
-      .insert({
-        title: formData.title,
-        description: formData.description,
-        audience_id: formData.audience_ids?.[0] || null, // Primary audience for reference
-        audience_snapshots: formData.audience_snapshots,
-        source_concept_id: formData.source_concept_id || null,
-        user_id: userId
-      })
+      .insert(conceptData)
       .select()
       .single()
 

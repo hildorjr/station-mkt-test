@@ -45,8 +45,9 @@ export default function AudiencesList({ initialAudiences }: AudiencesListProps) 
 
   const getAudienceHighlights = (audience: Audience) => {
     const highlights: string[] = []
-    const demo = audience.demographics
-    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const demo = (audience.demographics as any) || {}
+
     if (demo.age_range?.min || demo.age_range?.max) {
       const ageStr = demo.age_range.min && demo.age_range.max 
         ? `${demo.age_range.min}-${demo.age_range.max}`
@@ -162,23 +163,27 @@ export default function AudiencesList({ initialAudiences }: AudiencesListProps) 
                   ))}
                 </div>
 
-                {audience.demographics.interests && audience.demographics.interests.length > 0 && (
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Interests:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {audience.demographics.interests.slice(0, 3).map((interest, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {interest}
-                        </Badge>
-                      ))}
-                      {audience.demographics.interests.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{audience.demographics.interests.length - 3} more
-                        </Badge>
-                      )}
+                {(() => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const demo = (audience.demographics as any) || {}
+                  return demo.interests && demo.interests.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Interests:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {demo.interests.slice(0, 3).map((interest: string, index: number) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {interest}
+                          </Badge>
+                        ))}
+                        {demo.interests.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{demo.interests.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )
+                })()}
               </CardContent>
             </Card>
           ))}

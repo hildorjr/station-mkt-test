@@ -257,11 +257,22 @@ function ConceptContent() {
                           <p className="text-sm text-gray-600">
                             {audienceSnapshot.demographics && (
                               <>
-                                {audienceSnapshot.demographics.age_range?.min && audienceSnapshot.demographics.age_range?.max && 
-                                  `Ages ${audienceSnapshot.demographics.age_range.min}-${audienceSnapshot.demographics.age_range.max} • `
-                                }
-                                {audienceSnapshot.demographics.gender?.filter(g => g !== 'All genders').join(', ')}
-                                {audienceSnapshot.demographics.location?.type && ` • ${audienceSnapshot.demographics.location.type} areas`}
+                                {(() => {
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                  const demo = audienceSnapshot.demographics as any
+                                  return demo.age_range?.min && demo.age_range?.max &&
+                                    `Ages ${demo.age_range.min}-${demo.age_range.max} • `
+                                })()}
+                                {(() => {
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                  const demo = audienceSnapshot.demographics as any
+                                  return demo.gender?.filter((g: string) => g !== 'All genders').join(', ')
+                                })()}
+                                {(() => {
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                  const demo = audienceSnapshot.demographics as any
+                                  return demo.location?.type && ` • ${demo.location.type} areas`
+                                })()}
                               </>
                             )}
                           </p>
@@ -275,15 +286,19 @@ function ConceptContent() {
                         <div>
                           <h3 className="font-semibold text-gray-900 mb-2">{audience.name}</h3>
                           <p className="text-sm text-gray-600">
-                            {audience.demographics && (
-                              <>
-                                {audience.demographics.age_range?.min && audience.demographics.age_range?.max && 
-                                  `Ages ${audience.demographics.age_range.min}-${audience.demographics.age_range.max} • `
-                                }
-                                {audience.demographics.gender?.filter(g => g !== 'All genders').join(', ')}
-                                {audience.demographics.location?.type && ` • ${audience.demographics.location.type} areas`}
-                              </>
-                            )}
+                            {audience.demographics && (() => {
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              const demo = audience.demographics as any
+                              return (
+                                <>
+                                  {demo.age_range?.min && demo.age_range?.max &&
+                                    `Ages ${demo.age_range.min}-${demo.age_range.max} • `
+                                  }
+                                  {demo.gender?.filter((g: string) => g !== 'All genders').join(', ')}
+                                  {demo.location?.type && ` • ${demo.location.type} areas`}
+                                </>
+                              )
+                            })()}
                           </p>
                         </div>
                         <Button

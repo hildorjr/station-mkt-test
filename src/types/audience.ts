@@ -1,12 +1,11 @@
-export interface Audience {
-  id: string
-  user_id: string
-  name: string
-  demographics: AudienceDemographics
-  created_at: string
-  updated_at: string
-}
+import { Database } from './database'
 
+// Use Supabase-generated types
+export type Audience = Database['public']['Tables']['audiences']['Row']
+export type AudienceInsert = Database['public']['Tables']['audiences']['Insert']
+export type AudienceUpdate = Database['public']['Tables']['audiences']['Update']
+
+// Keep the demographics interface for form handling and type safety
 export interface AudienceDemographics {
   // Basic Demographics
   age_range?: {
