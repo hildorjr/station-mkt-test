@@ -5,13 +5,14 @@ A modern web application that generates AI-powered marketing concepts based on d
 ## ✨ Features
 
 - **Audience Management**: Create detailed audience profiles with demographics, interests, and behaviors
-- **AI Concept Generation**: Generate marketing concepts using OpenAI GPT-3.5-turbo
+- **AI Concept Generation**: Generate marketing concepts using OpenAI GPT-3.5-turbo (server-side integration)
 - **Multi-Audience Targeting**: Select multiple audiences for comprehensive campaign strategies
 - **Concept Remixing**: Create variations of existing concepts with custom instructions
 - **Audience Snapshots**: Preserve audience data even when original audiences are deleted
 - **User Authentication**: Secure email/password authentication with user isolation
 - **User Isolation**: Secure user accounts with completely isolated data
 - **Modern UI**: Built with shadcn/ui components and Tailwind CSS
+- **Security**: Server-side API integration with authentication and authorization
 
 ## 🚀 Quick Start
 
@@ -38,8 +39,8 @@ Create `.env.local` in the root directory:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# OpenAI Configuration
-NEXT_PUBLIC_OPENAI_API_KEY=your_openai_api_key
+# OpenAI Configuration (Server-side only for security)
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### 3. Supabase Setup
@@ -51,6 +52,7 @@ NEXT_PUBLIC_OPENAI_API_KEY=your_openai_api_key
    - `supabase/migrations/20250926164149_create_audiences_and_concepts.sql`
    - `supabase/migrations/20250926164723_add_user_relations.sql` 
    - `supabase/migrations/20250926180331_update_concepts_with_audience_snapshots.sql`
+   - `supabase/migrations/20250926190000_add_api_usage_logs.sql` (optional)
 
 #### Option B: Using Supabase CLI
 ```bash
@@ -88,12 +90,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - **`users`**: User profiles (auto-created from auth.users)
 - **`audiences`**: Audience definitions with demographics stored as JSONB
 - **`marketing_concepts`**: AI-generated concepts with audience snapshots
+- **`api_usage_logs`**: Optional API usage tracking for monitoring
 
 ### Key Features
 
 - **Row Level Security (RLS)**: Users can only access their own data
 - **Audience Snapshots**: Full audience data preserved in concepts for deletion safety
 - **Auto User Creation**: User profiles created automatically on signup
+- **API Usage Tracking**: Optional monitoring of AI API usage
 
 ## 🏗️ Architecture
 
@@ -109,8 +113,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### AI Integration (OpenAI)
 - **Model**: GPT-3.5-turbo for cost-effective generation
+- **Security**: Server-side API integration with authentication
+- **API Routes**: `/api/generate-concept` and `/api/remix-concept`
 - **Features**: Concept generation, remixing, robust JSON parsing
 - **Fallbacks**: Graceful error handling with backup responses
+- **Authorization**: User ownership verification for all AI operations
+- **Monitoring**: Optional API usage logging for rate limiting
 
 ## 🔧 Available Scripts
 
@@ -129,7 +137,10 @@ src/
 ├── app/                    # Next.js App Router pages
 │   ├── auth/              # Authentication pages
 │   ├── audiences/         # Audience management
-│   └── concepts/          # Concept generation & management
+│   ├── concepts/          # Concept generation & management
+│   └── api/               # Server-side API routes
+│       ├── generate-concept/ # Secure OpenAI concept generation
+│       └── remix-concept/    # Secure OpenAI concept remixing
 ├── components/            # React components
 │   ├── audiences/         # Audience-specific components
 │   ├── auth/              # Authentication components
@@ -139,9 +150,13 @@ src/
 ├── hooks/                 # Custom React hooks
 ├── lib/                   # Utility functions
 │   ├── supabase/          # Supabase client configuration
+│   │   ├── client.ts      # Browser client
+│   │   ├── server.ts      # Server component client
+│   │   ├── api.ts         # API route client
+│   │   └── middleware.ts  # Auth middleware
 │   ├── audiences.ts       # Audience CRUD operations
 │   ├── marketing-concepts.ts # Concept CRUD operations
-│   ├── openai.ts          # OpenAI integration
+│   ├── openai.ts          # Client-side OpenAI integration
 │   └── db-utils.ts        # Database utilities
 ├── providers/             # React context providers
 └── types/                 # TypeScript type definitions
@@ -181,7 +196,11 @@ src/
 - **Authentication**: Secure email/password authentication via Supabase Auth
 - **Authorization**: Row Level Security (RLS) ensures data isolation
 - **Data Protection**: User data is completely isolated between accounts
-- **API Security**: OpenAI API key handled securely (consider server-side for production)
+- **API Security**: OpenAI API key secured on server-side with authentication
+- **Input Validation**: Comprehensive validation with Zod schemas
+- **Rate Limiting**: Foundation for API rate limiting and monitoring
+- **Server-Side AI**: All OpenAI API calls go through authenticated server routes
+- **User Verification**: Ownership checks ensure users can only access their own data
 
 ## 🚀 Production Deployment
 
@@ -205,10 +224,17 @@ npm start
 - All database operations are fully typed
 - Use the `DatabaseResponse<T>` type for consistent error handling
 
+### Security Considerations
+- OpenAI API key is secure on server-side only
+- All AI operations require authentication
+- User ownership verification for all data operations
+- Input validation with Zod schemas
+
 ### Adding New Features
 - Follow the established patterns in `/lib` for data operations
 - Use shadcn/ui components for consistency
 - Implement proper error handling and loading states
+- Use server-side API routes for external API integrations
 
 ## 🤝 Contributing
 
