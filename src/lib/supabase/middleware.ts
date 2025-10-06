@@ -32,16 +32,37 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  // Refresh the session - client-side route protection handles auth logic
-  await supabase.auth.getUser()
+  // Refresh the session
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Define protected routes
+  const protectedRoutes = ['/audiences', '/concepts']
+  const authRoutes = ['/auth/login', '/auth/register']
+  
+  const { pathname } = request.nextUrl
+
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
+
+  // Redirect unauthenticated users from protected routes
+  if (isProtectedRoute && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/login'
+    url.searchParams.set('redirectTo', pathname)
+    return NextResponse.redirect(url)
+  }
+
+  // Redirect authenticated users from auth routes to audiences
+  if (isAuthRoute && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/audiences'
+    return NextResponse.redirect(url)
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so: NextResponse.next({ request })
   // 2. Copy over the cookies, like so: response.cookies.setAll(supabaseResponse.cookies.getAll())
-
-  // Let client-side route protection handle redirects
-  // Middleware just maintains the session
 
   return supabaseResponse
 }

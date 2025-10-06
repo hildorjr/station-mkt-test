@@ -1,33 +1,18 @@
-'use client'
-
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useSupabase } from '@/providers/supabase-provider'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Home() {
-  const { user, loading } = useSupabase()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!loading && user) {
-        router.push('/audiences')
-    }
-  }, [user, loading, router])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-      </div>
-    )
-  }
-
-  // Don't render the landing page if user is logged in (will redirect)
+export default async function Home() {
+  const supabase = await createClient()
+  
+  // Check if user is authenticated on the server
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  // If user is logged in, redirect to audiences page
   if (user) {
-    return null
+    redirect('/audiences')
   }
   return (
     <div className="min-h-screen bg-gray-50">

@@ -12,20 +12,11 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import AppNavigation from '@/components/navigation/app-navigation'
-import ProtectedRoute from '@/components/auth/protected-route'
 import ConceptRemixer from '@/components/concepts/concept-remixer'
 import { MarketingConcept } from '@/types/marketing-concept'
 import { Audience } from '@/types/audience'
 
 export default function ConceptPage() {
-  return (
-    <ProtectedRoute>
-      <ConceptContent />
-    </ProtectedRoute>
-  )
-}
-
-function ConceptContent() {
   const params = useParams()
   const router = useRouter()
   const { user } = useSupabase()

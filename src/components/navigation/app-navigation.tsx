@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSupabase } from '@/providers/supabase-provider'
 import { useAuth } from '@/hooks/use-auth'
+import { handleDatabaseError } from '@/lib/db-utils'
 
 interface AppNavigationProps {
   title?: string
@@ -35,9 +36,10 @@ export default function AppNavigation({ title, showBackButton = true, customBack
     setIsMobileMenuOpen(false)
   }
 
-  const handleSignOut = () => {
-    signOut()
+  const handleSignOut = async () => {
+    await signOut()
     setIsMobileMenuOpen(false)
+    router.push('/auth/login')
   }
 
   return (
@@ -94,7 +96,7 @@ export default function AppNavigation({ title, showBackButton = true, customBack
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => signOut()}
+                      onClick={handleSignOut}
                       className="flex items-center space-x-1"
                     >
                       <LogOut className="w-4 h-4" />

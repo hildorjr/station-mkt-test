@@ -5,18 +5,9 @@ import { useSupabase } from '@/providers/supabase-provider'
 import { getConceptsClient } from '@/lib/marketing-concepts'
 import ConceptsList from '@/components/concepts/concepts-list'
 import AppNavigation from '@/components/navigation/app-navigation'
-import ProtectedRoute from '@/components/auth/protected-route'
 import { MarketingConcept } from '@/types/marketing-concept'
 
 export default function ConceptsPage() {
-  return (
-    <ProtectedRoute>
-      <ConceptsContent />
-    </ProtectedRoute>
-  )
-}
-
-function ConceptsContent() {
   const { user } = useSupabase()
   const [concepts, setConcepts] = useState<MarketingConcept[]>([])
   const [dataLoading, setDataLoading] = useState(true)

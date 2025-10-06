@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -22,8 +22,11 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { signIn, loading } = useAuth()
   const [error, setError] = useState('')
+  
+  const redirectTo = searchParams.get('redirectTo') || '/audiences'
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -41,7 +44,7 @@ export default function LoginPage() {
     if (signInError) {
       setError(signInError.message)
      } else {
-       router.push('/audiences')
+       router.push(redirectTo)
      }
   }
 

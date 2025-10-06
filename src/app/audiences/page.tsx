@@ -5,24 +5,23 @@ import { useSupabase } from '@/providers/supabase-provider'
 import { getAudiencesClient } from '@/lib/audiences'
 import AudiencesList from '@/components/audiences/audiences-list'
 import AppNavigation from '@/components/navigation/app-navigation'
-import ProtectedRoute from '@/components/auth/protected-route'
 import { Audience } from '@/types/audience'
 
 export default function AudiencesPage() {
-  return (
-    <ProtectedRoute>
-      <AudiencesContent />
-    </ProtectedRoute>
-  )
-}
-
-function AudiencesContent() {
-  const { user } = useSupabase()
+  const { user, loading } = useSupabase()
   const [audiences, setAudiences] = useState<Audience[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    // If middleware is working correctly, we should never reach here without a user
+    // But if we do, show a brief loading state then redirect
+    if (!loading && !user) {
+      // This should not happen due to middleware, but as a fallback
+      window.location.href = '/auth/login'
+      return
+    }
+
     if (!user) return
 
     const fetchAudiences = async () => {
@@ -39,7 +38,29 @@ function AudiencesContent() {
     }
 
     fetchAudiences()
-  }, [user])
+  }, [user, loading])
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <AppNavigation showBackButton={false} />
+        <div className="py-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // This should not happen due to middleware, but as a fallback
+  if (!user) {
+    return null
+  }
 
   if (dataLoading) {
     return (

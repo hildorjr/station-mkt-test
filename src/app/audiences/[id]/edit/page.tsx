@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useSupabase } from '@/providers/supabase-provider'
 import { getAudienceClient } from '@/lib/audiences'
 import AudienceForm from '@/components/audiences/audience-form'
-import ProtectedRoute from '@/components/auth/protected-route'
 import { AudienceFormData } from '@/types/audience'
 
 interface EditAudiencePageProps {
@@ -13,14 +12,6 @@ interface EditAudiencePageProps {
 }
 
 export default function EditAudiencePage({ params }: EditAudiencePageProps) {
-  return (
-    <ProtectedRoute>
-      <EditAudienceContent params={params} />
-    </ProtectedRoute>
-  )
-}
-
-function EditAudienceContent({ params }: EditAudiencePageProps) {
   const { user } = useSupabase()
   const router = useRouter()
   const [audienceId, setAudienceId] = useState<string | null>(null)
